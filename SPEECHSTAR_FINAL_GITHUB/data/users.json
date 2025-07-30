@@ -1,0 +1,14 @@
+{
+  "sample_user": {
+    "user_id": 123456789,
+    "username": "test_user",
+    "first_name": "Тестовый",
+    "last_name": "Пользователь",
+    "registration_date": "2025-07-30",
+    "subscription_active": true,
+    "subscription_type": "trial",
+    "age_group": "9-14 мес",
+    "trial_start": "2025-07-30",
+    "tasks_completed": 5
+  }
+}
