@@ -1,0 +1,27 @@
+{
+  "user_registrations": {
+    "160577582": {
+      "registration_date": "2025-07-24T12:09:59.979259",
+      "username": "aalenanikitinaa",
+      "completed_registration": true
+    }
+  },
+  "interactions": [
+    {
+      "user_id": 160577582,
+      "action": "get_task",
+      "timestamp": "2025-07-24T12:10:24.404398"
+    }
+  ],
+  "task_views": [
+    {
+      "user_id": 160577582,
+      "task_id": "sample001",
+      "timestamp": "2025-07-24T12:10:24.408138"
+    }
+  ],
+  "user_sessions": {},
+  "popular_tasks": {
+    "sample001": 1
+  }
+}

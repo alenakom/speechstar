@@ -1,0 +1,8 @@
+# Зависимости для Railway/Render/Fly.io
+aiogram==3.13.1
+aiohttp==3.10.10
+apscheduler==3.10.4
+flask==3.1.0
+gunicorn==23.0.0
+requests==2.32.3
+pillow==11.0.0

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Дашборд</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('tasks_list') }}">Задания</a></li>
+                <li class="breadcrumb-item active">{{ "Редактирование" if edit_mode else "Новое задание" }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-{{ 'edit' if edit_mode else 'plus' }} me-2"></i>
+                    {{ "Редактировать задание" if edit_mode else "Создать новое задание" }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">
+                                    <i class="fas fa-heading me-1"></i>
+                                    Название задания *
+                                </label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ task.get('title', '') }}" required>
+                                <div class="form-text">Краткое и понятное название упражнения</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="day_number" class="form-label">
+                                    <i class="fas fa-calendar-day me-1"></i>
+                                    День
+                                </label>
+                                <input type="number" class="form-control" id="day_number" name="day_number" 
+                                       value="{{ task.get('day_number', 1) }}" min="1" max="365">
+                                <div class="form-text">Порядковый номер дня</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="age_group" class="form-label">
+                            <i class="fas fa-baby me-1"></i>
+                            Возрастная группа *
+                        </label>
+                        <select class="form-select" id="age_group" name="age_group" required>
+                            <option value="">Выберите возрастную группу</option>
+                            {% for age in age_groups %}
+                            <option value="{{ age }}" {{ 'selected' if task.get('age_group') == age else '' }}>
+                                {{ age }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Для какого возраста предназначено это задание</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>
+                            Описание задания *
+                        </label>
+                        <textarea class="form-control" id="description" name="description" rows="6" required>{{ task.get('description', '') }}</textarea>
+                        <div class="form-text">Подробное описание упражнения с инструкциями для родителей</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="image" class="form-label">
+                                    <i class="fas fa-image me-1"></i>
+                                    Изображение
+                                </label>
+                                <input type="file" class="form-control" id="image" name="image" 
+                                       accept="image/png,image/jpeg,image/gif">
+                                <div class="form-text">PNG, JPG или GIF файл</div>
+                                {% if task.get('image_url') %}
+                                <div class="mt-2">
+                                    <small class="text-success">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        Изображение загружено
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="video" class="form-label">
+                                    <i class="fas fa-video me-1"></i>
+                                    Видео
+                                </label>
+                                <input type="file" class="form-control" id="video" name="video" 
+                                       accept="video/mp4,video/avi,video/mov">
+                                <div class="form-text">MP4, AVI или MOV файл</div>
+                                {% if task.get('video_url') %}
+                                <div class="mt-2">
+                                    <small class="text-success">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        Видео загружено
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('tasks_list') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Отмена
+                                </a>
+                                <button type="submit" class="btn btn-{{ 'warning' if edit_mode else 'success' }}">
+                                    <i class="fas fa-save me-2"></i>
+                                    {{ "Сохранить изменения" if edit_mode else "Создать задание" }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        {% if task.get('image_url') or task.get('video_url') %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>
+                    Предварительный просмотр медиа
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if task.get('image_url') %}
+                    <div class="col-md-6">
+                        <h6>Изображение:</h6>
+                        <img src="{{ task.get('image_url') }}" class="img-fluid rounded" alt="Task image">
+                    </div>
+                    {% endif %}
+                    {% if task.get('video_url') %}
+                    <div class="col-md-6">
+                        <h6>Видео:</h6>
+                        <video controls class="w-100">
+                            <source src="{{ task.get('video_url') }}" type="video/mp4">
+                            Ваш браузер не поддерживает воспроизведение видео.
+                        </video>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Character counter for description
+document.getElementById('description').addEventListener('input', function() {
+    const maxLength = 2000;
+    const currentLength = this.value.length;
+    const remaining = maxLength - currentLength;
+    
+    let helpText = this.parentNode.querySelector('.form-text');
+    if (remaining < 100) {
+        helpText.classList.add('text-warning');
+        helpText.textContent = `Осталось символов: ${remaining}`;
+    } else {
+        helpText.classList.remove('text-warning');
+        helpText.textContent = 'Подробное описание упражнения с инструкциями для родителей';
+    }
+});
+
+// Age group change handler
+document.getElementById('age_group').addEventListener('change', function() {
+    const descriptions = {
+        '8-12 мес': 'Первые звуки и реакции на речь',
+        '12-15 мес': 'Первые слова и жесты',
+        '15-18 мес': 'Простые просьбы и подражание звукам',
+        '18-24 мес': 'Фразы из двух слов и названия действий',
+        '2-3 года': 'Вопросы, рассказы и сложная речь'
+    };
+    
+    const selected = this.value;
+    const helpText = this.parentNode.querySelector('.form-text');
+    
+    if (descriptions[selected]) {
+        helpText.textContent = descriptions[selected];
+    } else {
+        helpText.textContent = 'Для какого возраста предназначено это задание';
+    }
+});
+</script>
+{% endblock %}

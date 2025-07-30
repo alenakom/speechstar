@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-chart-line me-2"></i>
+            📊 Аналитика речевого развития
+        </h1>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Система в режиме разработки:</strong> Статистика показывает реальные данные. Все пользователи взаимодействуют с ботом в памяти. После настройки ЮKassa данные будут сохраняться в PostgreSQL.
+        </div>
+    </div>
+</div>
+
+<!-- Пользовательская статистика -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('total_users', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-users"></i> Всего пользователей</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('trial_users', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-clock"></i> Пробный период</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('monthly_subscribers', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-calendar-alt"></i> Месячная подписка</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('lifetime_subscribers', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-crown"></i> Навсегда</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="card bg-secondary text-white">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('promocode_users', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-ticket-alt"></i> По промокодам</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="card bg-dark text-white">
+            <div class="card-body text-center">
+                <h3>{{ stats.get('total_payments', 0) }}</h3>
+                <p class="mb-0"><i class="fas fa-credit-card"></i> Всего платежей</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статус системы -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h5 class="text-warning"><i class="fas fa-exclamation-triangle"></i> Платежи не настроены</h5>
+                <p class="mb-0">Требуется настройка ЮKassa для приема платежей</p>
+                <small class="text-muted">См. YOOKASSA_SETUP.md</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h5 class="text-info"><i class="fas fa-database"></i> Тестовый режим</h5>
+                <p class="mb-0">Данные хранятся в памяти бота</p>
+                <small class="text-muted">Подключение к PostgreSQL готово</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статистика по возрастным группам -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-baby me-2"></i>
+                    Статистика по возрастным группам
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for age_group, data in task_stats.items() %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0">👶 {{ age_group }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <h4 class="text-primary">{{ data.total }}</h4>
+                                        <small>Всего заданий</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h4 class="text-success">{{ data.with_images }}</h4>
+                                        <small>С изображениями</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <h4 class="text-info">{{ data.with_videos }}</h4>
+                                        <small>С видео</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Быстрые действия -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs me-2"></i>
+                    Управление контентом
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('tasks_list') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-list me-2"></i>
+                            Все задания
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('new_task') }}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus me-2"></i>
+                            Добавить задание
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('users') }}" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-users me-2"></i>
+                            Пользователи
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('analytics') }}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Аналитика
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Информация о системе -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-robot me-2"></i>
+                    Статус Telegram бота
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>@SpeechStarBot</span>
+                    <span class="badge bg-success">Активен</span>
+                </div>
+                <small class="text-muted">Возрастные группы: 9-14 мес, 15-19 мес</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-ticket-alt me-2"></i>
+                    Промокоды
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Активных промокодов</span>
+                    <span class="badge bg-info">100</span>
+                </div>
+                <small class="text-muted">Для бесплатного доступа навсегда</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

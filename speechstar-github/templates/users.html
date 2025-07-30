@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Пользователи бота
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if users %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID пользователя</th>
+                                    <th>Имя пользователя</th>
+                                    <th>Возрастная группа</th>
+                                    <th>Статус подписки</th>
+                                    <th>Дата регистрации</th>
+                                    <th>Заданий выполнено</th>
+                                    <th>Последняя активность</th>
+                                    <th>Уровень</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td><code>{{ user.user_id }}</code></td>
+                                    <td>{{ user.username }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ user.age_group }}</span>
+                                    </td>
+                                    <td>
+                                        {% if user.subscription_status == 'trial' %}
+                                            <span class="badge bg-warning">Пробный период</span>
+                                        {% elif user.subscription_status == 'monthly' %}
+                                            <span class="badge bg-success">Месячная подписка</span>
+                                        {% elif user.subscription_status == 'lifetime' %}
+                                            <span class="badge bg-primary">Пожизненная</span>
+                                        {% elif user.subscription_status == 'promocode' %}
+                                            <span class="badge bg-secondary">Промокод</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">Новый</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ user.registration_date[:10] if user.registration_date else 'Н/Д' }}</td>
+                                    <td>{{ user.tasks_completed }}</td>
+                                    <td>{{ user.last_activity[:10] if user.last_activity else 'Н/Д' }}</td>
+                                    <td>
+                                        <span class="badge bg-outline-secondary">{{ user.level }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Пользователей пока нет</h5>
+                        <p class="text-muted">Когда пользователи начнут пользоваться ботом, они появятся здесь</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

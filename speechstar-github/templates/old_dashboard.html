@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-chart-line me-2"></i>
+            Панель управления
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">Всего пользователей</h5>
+                        <h2 class="mt-2">{{ stats.get('total_users', 0) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">Активные пользователи</h5>
+                        <h2 class="mt-2">{{ stats.get('active_users', 0) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-check fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">Пробный период</h5>
+                        <h2 class="mt-2">{{ stats.get('trial_users', 0) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title mb-0">Подписчики</h5>
+                        <h2 class="mt-2">{{ stats.get('subscribed_users', 0) }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-crown fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tasks by Age Group -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-baby me-2"></i>
+                    Задания по возрастным группам
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for age_group, stats_data in task_stats.items() %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h6 class="mb-0">{{ age_group }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="h4 text-primary">{{ stats_data.get('total', 0) }}</div>
+                                        <small class="text-muted">Всего заданий</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="h4 text-success">{{ stats_data.get('with_images', 0) }}</div>
+                                        <small class="text-muted">С фото</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="h4 text-info">{{ stats_data.get('with_videos', 0) }}</div>
+                                        <small class="text-muted">С видео</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ url_for('tasks_list', age_group=age_group) }}" class="btn btn-sm btn-outline-primary">
+                                    Просмотреть задания
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Быстрые действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ url_for('new_task') }}" class="btn btn-success w-100">
+                            <i class="fas fa-plus me-2"></i>
+                            Новое задание
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ url_for('tasks_list') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-list me-2"></i>
+                            Все задания
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ url_for('users') }}" class="btn btn-info w-100">
+                            <i class="fas fa-users me-2"></i>
+                            Пользователи
+                        </a>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-2">
+                        <a href="{{ url_for('analytics') }}" class="btn btn-warning w-100">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Аналитика
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

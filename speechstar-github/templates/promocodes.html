@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-ticket-alt me-2"></i>
+            🎟️ Управление промокодами
+        </h1>
+    </div>
+</div>
+
+<!-- Статистика промокодов -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h3>100</h3>
+                <p class="mb-0"><i class="fas fa-ticket-alt"></i> Всего промокодов</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>100</h3>
+                <p class="mb-0"><i class="fas fa-check-circle"></i> Активных</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h3>0</h3>
+                <p class="mb-0"><i class="fas fa-user-check"></i> Использовано</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>100</h3>
+                <p class="mb-0"><i class="fas fa-clock"></i> Доступно</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Именные промокоды -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>
+                    Именные промокоды (30 штук)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">MAMA2025</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">BABY001</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SPEECH10</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">RAZVIT20</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">FREE100</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">RODIT50</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">DETKI99</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">MAMA123</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">BABY456</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">BEST001</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SUPER10</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">GIFT777</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">PROMO88</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">MAMA321</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">KIDS100</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">LOVE555</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">BABY777</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">HAPPY99</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SMART10</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">CLEVER5</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">GROW123</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">LEARN50</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">PLAY789</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">JOY2025</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SPEECH1</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">WORDS99</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">TALK123</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SPEAK50</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">VOICE10</code></div>
+                    <div class="col-md-2 mb-2"><code class="badge bg-primary p-2">SOUND77</code></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Пронумерованные промокоды -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list-ol me-2"></i>
+                    Пронумерованные промокоды (70 штук)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for i in range(1, 71) %}
+                    <div class="col-md-2 mb-2">
+                        <code class="badge bg-secondary p-2">CODE{{ '%03d'|format(i) }}</code>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Инструкции -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Как работают промокоды
+                </h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>Пользователь выбирает "Промокод" в меню оплаты бота</li>
+                    <li>Вводит любой код из списка выше</li>
+                    <li>Получает <strong>бесплатный доступ навсегда</strong> к выбранной возрастной группе</li>
+                    <li>Промокод можно использовать только один раз на аккаунт</li>
+                </ol>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Примеры:</strong> MAMA2025 (для мам), FREE100 (бесплатный доступ), CODE001 (универсальный)
+                </div>
+                
+                <div class="alert alert-success">
+                    <i class="fas fa-check me-2"></i>
+                    Все промокоды активны и работают в боте @SpeechStarBot
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

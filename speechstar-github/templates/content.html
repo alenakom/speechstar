@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}Управление контентом - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-edit text-primary me-2"></i>
+            Управление контентом
+        </h1>
+    </div>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-4" id="contentTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button">
+            <i class="fas fa-tasks me-2"></i>
+            Задания
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="images-tab" data-bs-toggle="tab" data-bs-target="#images" type="button">
+            <i class="fas fa-images me-2"></i>
+            Изображения
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="contentTabsContent">
+    <!-- Tasks Tab -->
+    <div class="tab-pane fade show active" id="tasks" role="tabpanel">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="taskSearch" placeholder="Поиск заданий...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#taskModal">
+                    <i class="fas fa-plus me-2"></i>
+                    Добавить задание
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tasks List -->
+        <div class="row" id="tasksList">
+            {% for task in tasks %}
+            <div class="col-md-6 mb-3 task-item" data-title="{{ task.title|lower }}" data-description="{{ task.description|lower }}">
+                <div class="card {% if not task.get('active', True) %}border-secondary{% endif %}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ task.title }}</h6>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-info btn-sm" onclick="showTelegramPreview('{{ task.id }}')" title="Превью Telegram">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="editTask('{{ task.id }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm" onclick="toggleTask('{{ task.id }}')">
+                                <i class="fas fa-{% if task.get('active', True) %}pause{% else %}play{% endif %}"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteTask('{{ task.id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ task.description[:100] }}{% if task.description|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-tag me-1"></i>
+                                {{ task.get('category', 'general') }}
+                            </small>
+                            <span class="badge bg-{% if task.get('active', True) %}success{% else %}secondary{% endif %}">
+                                {% if task.get('active', True) %}Активно{% else %}Неактивно{% endif %}
+                            </span>
+                        </div>
+                        
+                        {% if task.get('image_path') %}
+                        <div class="mt-2">
+                            <small class="text-info">
+                                <i class="fas fa-image me-1"></i>
+                                Есть изображение
+                            </small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not tasks %}
+        <div class="text-center py-5">
+            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+            <h4>Заданий пока нет</h4>
+            <p class="text-muted">Добавьте первое задание, нажав на кнопку "Добавить задание"</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Images Tab -->
+    <div class="tab-pane fade" id="images" role="tabpanel">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h5>Загрузка изображений</h5>
+                <p class="text-muted">Поддерживаемые форматы: PNG, JPG, JPEG, GIF, WebP. Максимальный размер: 10MB</p>
+            </div>
+            <div class="col-md-4">
+                <form method="POST" action="{{ url_for('upload_image') }}" enctype="multipart/form-data">
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="image" accept="image/*" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Images List -->
+        <div class="row">
+            {% for image in uploaded_images %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-image fa-3x text-primary mb-3"></i>
+                        <h6 class="card-title">{{ image.filename }}</h6>
+                        <p class="text-muted small">
+                            {{ image.info.width }}x{{ image.info.height }}px<br>
+                            {{ "%.1f"|format(image.info.size_bytes / 1024) }} KB
+                        </p>
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-primary btn-sm" onclick="copyImagePath('{{ image.path }}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a href="{{ url_for('delete_image', filename=image.filename) }}" 
+                               class="btn btn-outline-danger btn-sm"
+                               onclick="return confirm('Удалить изображение?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not uploaded_images %}
+        <div class="text-center py-5">
+            <i class="fas fa-images fa-3x text-muted mb-3"></i>
+            <h4>Изображений пока нет</h4>
+            <p class="text-muted">Загрузите изображения для использования в заданиях</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Task Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalTitle">Добавить задание</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="taskForm">
+                    <input type="hidden" id="taskId" name="id">
+                    
+                    <div class="mb-3">
+                        <label for="taskTitle" class="form-label">Название задания *</label>
+                        <input type="text" class="form-control" id="taskTitle" name="title" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Описание *</label>
+                        <textarea class="form-control" id="taskDescription" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="taskCategory" class="form-label">Категория</label>
+                                <input type="text" class="form-control" id="taskCategory" name="category" value="general">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="taskDifficulty" class="form-label">Сложность</label>
+                                <select class="form-select" id="taskDifficulty" name="difficulty">
+                                    <option value="easy">Легкая</option>
+                                    <option value="medium" selected>Средняя</option>
+                                    <option value="hard">Сложная</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="taskImagePath" class="form-label">Путь к изображению</label>
+                        <input type="text" class="form-control" id="taskImagePath" name="image_path" placeholder="media/uploads/image.jpg">
+                        <div class="form-text">Оставьте пустым, если изображение не нужно</div>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="taskActive" name="active" checked>
+                        <label class="form-check-label" for="taskActive">
+                            Активное задание
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="saveTask()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentTaskId = null;
+let tasksData = {{ tasks|tojson }};
+
+// Search functionality
+document.getElementById('taskSearch').addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    const taskItems = document.querySelectorAll('.task-item');
+    
+    taskItems.forEach(item => {
+        const title = item.dataset.title;
+        const description = item.dataset.description;
+        
+        if (title.includes(query) || description.includes(query)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+// Task functions
+function editTask(taskId) {
+    const task = tasksData.find(t => t.id === taskId);
+    if (!task) return;
+    
+    currentTaskId = taskId;
+    document.getElementById('taskModalTitle').textContent = 'Редактировать задание';
+    
+    document.getElementById('taskId').value = task.id;
+    document.getElementById('taskTitle').value = task.title;
+    document.getElementById('taskDescription').value = task.description;
+    document.getElementById('taskCategory').value = task.category || 'general';
+    document.getElementById('taskDifficulty').value = task.difficulty || 'medium';
+    document.getElementById('taskImagePath').value = task.image_path || '';
+    document.getElementById('taskActive').checked = task.active !== false;
+    
+    new bootstrap.Modal(document.getElementById('taskModal')).show();
+}
+
+function saveTask() {
+    const form = document.getElementById('taskForm');
+    const formData = new FormData(form);
+    
+    const taskData = {};
+    formData.forEach((value, key) => {
+        if (key === 'active') {
+            taskData[key] = document.getElementById('taskActive').checked;
+        } else {
+            taskData[key] = value;
+        }
+    });
+    
+    const url = currentTaskId ? `/api/tasks/${currentTaskId}` : '/api/tasks';
+    const method = currentTaskId ? 'PUT' : 'POST';
+    
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(taskData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Ошибка: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Произошла ошибка при сохранении');
+    });
+}
+
+function toggleTask(taskId) {
+    fetch(`/api/tasks/${taskId}/toggle`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Ошибка: ' + data.error);
+        }
+    });
+}
+
+function deleteTask(taskId) {
+    if (!confirm('Вы уверены, что хотите удалить это задание?')) return;
+    
+    fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Ошибка: ' + data.error);
+        }
+    });
+}
+
+function copyImagePath(path) {
+    navigator.clipboard.writeText(path).then(() => {
+        alert('Путь скопирован в буфер обмена');
+    });
+}
+
+// Reset modal when opening for new task
+document.getElementById('taskModal').addEventListener('hidden.bs.modal', function() {
+    currentTaskId = null;
+    document.getElementById('taskModalTitle').textContent = 'Добавить задание';
+    document.getElementById('taskForm').reset();
+    document.getElementById('taskActive').checked = true;
+});
+</script>
+{% endblock %}
